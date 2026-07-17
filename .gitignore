@@ -1,0 +1,22 @@
+# npm 패키지
+node_modules/
+
+# Hardhat 컴파일 결과
+artifacts/
+cache/
+
+# TypeScript 빌드 결과
+dist/
+
+# 환경변수 파일
+.env
+.env.*
+
+# 운영체제 및 편집기 임시 파일
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 로그 파일
+*.log

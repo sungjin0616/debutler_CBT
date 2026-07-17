@@ -1,0 +1,276 @@
+:root {
+  color: #1f2937;
+  background: #f4f7fb;
+  font-family: Pretendard, "Noto Sans KR", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f4f7fb 0%, #e9f0ff 100%);
+}
+
+button {
+  font: inherit;
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.hero-card,
+.panel,
+.summary-card {
+  background: #ffffff;
+  border: 1px solid #e5ebf5;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #4f7cff;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+}
+
+.hero-copy {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.status-badge {
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  background: #eef3ff;
+  color: #3b5bdb;
+}
+
+.status-badge.initial {
+  background: #eef3ff;
+  color: #3b5bdb;
+}
+
+.status-badge.token_minted,
+.status-badge.tokenminted {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-badge.finalized {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.status-badge.reward_deposited {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.status-badge.reward_claimed {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  padding: 20px 22px;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.summary-card strong {
+  font-size: 1.45rem;
+  color: #111827;
+}
+
+.panel {
+  padding: 24px 24px 28px;
+  margin-bottom: 20px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.panel-header p {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.step-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.step-item {
+  border-radius: 14px;
+  padding: 14px;
+  background: #f8fafc;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.step-item.current {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.step-item.done {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.step-item.pending {
+  opacity: 0.7;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  font-size: 0.9rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+th,
+td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+th {
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 11px 16px;
+  background: #2563eb;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: #64748b;
+}
+
+.status-message {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.info-panel ol {
+  margin: 12px 0 0 18px;
+  color: #374151;
+  line-height: 1.7;
+}
+
+.notice-panel p {
+  margin-top: 8px;
+  color: #374151;
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+  .hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
