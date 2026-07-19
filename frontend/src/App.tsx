@@ -268,7 +268,33 @@ function App(): JSX.Element {
     writeStorage(HISTORY_KEY, next);
   }
 
-  async function refreshState(targetParticipants = participants): Promise<void> {
+  function clearProjectRuntimeState(): void {
+    setParticipants([]);
+    setHistory([]);
+    setBalances({});
+    setClaimables({});
+    setClaimedAmounts({});
+    setClaimed({});
+    setTotalSupply(0n);
+    setSharesFinalized(false);
+    setRewardDeposited(0n);
+    setVaultBalance(0n);
+    setGrantParticipantId("");
+    setRevokeParticipantId("");
+    setGrantMemo("");
+    setRevokeAmount("");
+    setRevokeMemo("");
+    writeStorage(PARTICIPANTS_KEY, []);
+    writeStorage(HISTORY_KEY, []);
+  }
+
+  async function resetProjectRuntimeAndRefresh(): Promise<void> {
+    clearProjectRuntimeState();
+    const refreshed = await refreshState([]);
+    if (refreshed) setStatus("참여자, 지분, 보상금 상태를 초기화하고 Hardhat 상태를 다시 불러왔습니다.");
+  }
+
+  async function refreshState(targetParticipants = participants): Promise<boolean> {
     const rpcProvider = new ethers.JsonRpcProvider(RPC_URL);
     setIsRefreshing(true);
     setStatus("Hardhat 로컬 상태를 새로 불러오는 중입니다.");
@@ -378,12 +404,14 @@ function App(): JSX.Element {
       setClaimedAmounts(nextClaimedAmounts);
       setClaimed(nextClaimed);
       setStatus("프로젝트 상태를 최신 Hardhat 블록체인 값으로 갱신했습니다.");
+      return true;
     } catch (refreshError) {
       console.error(refreshError);
       setIsConnected(false);
       setAccounts([]);
       setChainId("");
       setError("Hardhat 로컬 노드에 연결할 수 없습니다. 프로젝트 루트에서 npm run node를 실행해주세요.");
+      return false;
     } finally {
       rpcProvider.destroy();
       setIsRefreshing(false);
@@ -1218,8 +1246,8 @@ function App(): JSX.Element {
           <p className="small-note">상태: {projectStatus} / 관리자: {owner ? shorten(owner) : "-"} / RPC: {RPC_URL} / Chain {chainId || "-"}</p>
         </div>
         <div className="header-actions">
-          <button type="button" className="secondary" onClick={() => void refreshState()} disabled={busy || isRefreshing}>
-            {isRefreshing ? "새로고침 중" : "상태 새로고침"}
+          <button type="button" className="secondary" onClick={() => void resetProjectRuntimeAndRefresh()} disabled={busy || isRefreshing}>
+            {isRefreshing ? "초기화 중" : "상태 초기화"}
           </button>
         </div>
       </header>
