@@ -23,7 +23,7 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export interface ContributionTokenInterface extends Interface {
+export interface CBTTokenInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "allowance"
@@ -317,11 +317,11 @@ export namespace TransferEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface ContributionToken extends BaseContract {
-  connect(runner?: ContractRunner | null): ContributionToken;
+export interface CBTToken extends BaseContract {
+  connect(runner?: ContractRunner | null): CBTToken;
   waitForDeployment(): Promise<this>;
 
-  interface: ContributionTokenInterface;
+  interface: CBTTokenInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,

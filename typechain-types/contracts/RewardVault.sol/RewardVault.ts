@@ -31,6 +31,7 @@ export interface RewardVaultInterface extends Interface {
       | "claimedAmount"
       | "contributionToken"
       | "depositReward"
+      | "hasClaimed"
       | "owner"
       | "renounceOwnership"
       | "totalEntitlement"
@@ -65,6 +66,10 @@ export interface RewardVaultInterface extends Interface {
   encodeFunctionData(
     functionFragment: "depositReward",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasClaimed",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -105,6 +110,7 @@ export interface RewardVaultInterface extends Interface {
     functionFragment: "depositReward",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "hasClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -238,6 +244,8 @@ export interface RewardVault extends BaseContract {
 
   depositReward: TypedContractMethod<[], [void], "payable">;
 
+  hasClaimed: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
@@ -277,6 +285,9 @@ export interface RewardVault extends BaseContract {
   getFunction(
     nameOrSignature: "depositReward"
   ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "hasClaimed"
+  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

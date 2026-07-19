@@ -46,6 +46,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReentrancyGuard__factory>;
     getContractFactory(
+      name: "CBTToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CBTToken__factory>;
+    getContractFactory(
+      name: "ContributionReward",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ContributionReward__factory>;
+    getContractFactory(
       name: "ContributionToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContributionToken__factory>;
@@ -99,6 +107,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ReentrancyGuard>;
     getContractAt(
+      name: "CBTToken",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CBTToken>;
+    getContractAt(
+      name: "ContributionReward",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ContributionReward>;
+    getContractAt(
       name: "ContributionToken",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -147,6 +165,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReentrancyGuard>;
     deployContract(
+      name: "CBTToken",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBTToken>;
+    deployContract(
+      name: "ContributionReward",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ContributionReward>;
+    deployContract(
       name: "ContributionToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ContributionToken>;
@@ -199,6 +225,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
+      name: "CBTToken",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CBTToken>;
+    deployContract(
+      name: "ContributionReward",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ContributionReward>;
     deployContract(
       name: "ContributionToken",
       args: any[],

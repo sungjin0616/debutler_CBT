@@ -22,21 +22,27 @@ import type {
 
 export interface IContributionTokenInterface extends Interface {
   getFunction(
-    nameOrSignature: "balanceOf" | "finalized" | "totalSupply"
+    nameOrSignature: "balanceOf" | "sharesFinalized" | "totalSupply"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(functionFragment: "finalized", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "sharesFinalized",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "finalized", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sharesFinalized",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -88,7 +94,7 @@ export interface IContributionToken extends BaseContract {
 
   balanceOf: TypedContractMethod<[account: AddressLike], [bigint], "view">;
 
-  finalized: TypedContractMethod<[], [boolean], "view">;
+  sharesFinalized: TypedContractMethod<[], [boolean], "view">;
 
   totalSupply: TypedContractMethod<[], [bigint], "view">;
 
@@ -100,7 +106,7 @@ export interface IContributionToken extends BaseContract {
     nameOrSignature: "balanceOf"
   ): TypedContractMethod<[account: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "finalized"
+    nameOrSignature: "sharesFinalized"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "totalSupply"

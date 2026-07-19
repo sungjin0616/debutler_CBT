@@ -30,7 +30,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "finalized",
+    name: "sharesFinalized",
     outputs: [
       {
         internalType: "bool",

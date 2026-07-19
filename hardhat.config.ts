@@ -7,7 +7,7 @@ import "@nomicfoundation/hardhat-toolbox";
  */
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.20",
+    version: "0.8.28",
     settings: {
       optimizer: {
         // 컴파일된 바이트코드의 실행 비용과 배포 비용을 낮추기 위해 최적화를 활성화한다.

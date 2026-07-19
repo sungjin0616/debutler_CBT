@@ -3,4 +3,6 @@
 /* eslint-disable */
 import type * as rewardVaultSol from "./RewardVault.sol";
 export type { rewardVaultSol };
+export type { CBTToken } from "./CBTToken";
+export type { ContributionReward } from "./ContributionReward";
 export type { ContributionToken } from "./ContributionToken";

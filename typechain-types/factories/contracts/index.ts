@@ -2,4 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as rewardVaultSol from "./RewardVault.sol";
+export { CBTToken__factory } from "./CBTToken__factory";
+export { ContributionReward__factory } from "./ContributionReward__factory";
 export { ContributionToken__factory } from "./ContributionToken__factory";

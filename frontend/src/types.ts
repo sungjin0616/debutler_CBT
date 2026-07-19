@@ -1,23 +1,69 @@
-/**
- * 발표용 화면에서 사용하는 프로젝트 진행 단계다.
- * 각 단계는 스마트 컨트랙트 데모의 실행 순서를 나타낸다.
- */
-export type ProjectStep =
-  | "INITIAL"
-  | "TOKEN_MINTED"
-  | "FINALIZED"
-  | "REWARD_DEPOSITED"
-  | "REWARD_CLAIMED";
+export type ParticipantSource = "hardhat" | "manual";
 
-/**
- * 프로젝트 팀원의 기여도와 보상 상태를 나타낸다.
- */
-export type Member = {
-  id: "A" | "B" | "C";
+export type ParticipantRole = "admin" | "participant";
+
+export type ProjectParticipant = {
+  id: string;
   name: string;
-  role: string;
-  token: number;
-  share: number;
-  reward: number;
-  claimed: boolean;
+  defaultName: string;
+  address: string;
+  normalizedAddress: string;
+  createdAt: string;
+  accountIndex: number | null;
+  role: ParticipantRole;
+  source: ParticipantSource;
+  projectRole: string;
+  description: string;
+};
+
+export type HardhatAccount = {
+  id: string;
+  name: string;
+  defaultName: string;
+  address: string;
+  normalizedAddress: string;
+  accountIndex: number;
+  role: ParticipantRole;
+};
+
+export type ContributionCriterion = {
+  id: string;
+  title: string;
+  category: string;
+  baseTokenAmount: string;
+  description: string;
+  createdAt: string;
+};
+
+export type ProjectInfo = {
+  name: string;
+  description: string;
+  createdAt: string;
+  targetCbtSupply: string;
+};
+
+export type HistoryAction =
+  | "register"
+  | "updateParticipant"
+  | "deleteParticipant"
+  | "criterion"
+  | "updateCriterion"
+  | "deleteCriterion"
+  | "grant"
+  | "revoke"
+  | "finalize"
+  | "deposit"
+  | "claim";
+
+export type TransactionHistory = {
+  id: string;
+  action: HistoryAction;
+  participantName?: string;
+  address?: string;
+  amount?: string;
+  memo: string;
+  transactionHash?: string;
+  blockNumber?: number;
+  success?: boolean;
+  createdAt: string;
 };

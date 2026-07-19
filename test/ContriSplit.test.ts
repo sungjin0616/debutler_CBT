@@ -29,9 +29,9 @@ describe("ContriSplit", function () {
       expect(await rewardVault.owner()).to.equal(owner.address);
       expect(await rewardVault.contributionToken()).to.equal(await contributionToken.getAddress());
       expect(await contributionToken.finalized()).to.equal(false);
-      expect(await contributionToken.name()).to.equal("Contribution-Based Token");
+      expect(await contributionToken.name()).to.equal("Contribution Based Token");
       expect(await contributionToken.symbol()).to.equal("CBT");
-      expect(await contributionToken.decimals()).to.equal(0);
+      expect(await contributionToken.decimals()).to.equal(18);
     });
   });
 
@@ -78,7 +78,7 @@ describe("ContriSplit", function () {
 
       await expect(
         contributionToken.connect(memberA).approve(outsider.address, 10n)
-      ).to.not.be.reverted;
+      ).to.be.revertedWithCustomError(contributionToken, "UserTransferNotAllowed");
 
       await expect(
         contributionToken.connect(outsider).transferFrom(memberA.address, memberB.address, 10n)
@@ -209,7 +209,7 @@ describe("ContriSplit", function () {
         rewardVault.connect(memberA).claimReward()
       ).to.changeEtherBalances([rewardVault, memberA], [-(ethers.parseEther("0.5")), ethers.parseEther("0.5")]);
 
-      await expect(rewardVault.connect(memberA).claimReward()).to.be.revertedWithCustomError(rewardVault, "NoRewardAvailable");
+      await expect(rewardVault.connect(memberA).claimReward()).to.be.revertedWithCustomError(rewardVault, "RewardAlreadyClaimed");
 
       await expect(rewardVault.connect(outsider).claimReward()).to.be.revertedWithCustomError(rewardVault, "NoRewardAvailable");
 
@@ -231,12 +231,13 @@ describe("ContriSplit", function () {
       await (await contributionToken.connect(owner).mint(memberA.address, 100n)).wait();
       await (await contributionToken.connect(owner).finalize()).wait();
       await (await rewardVault.connect(owner).depositReward({ value: ethers.parseEther("1") })).wait();
-      await (await rewardVault.connect(memberA).claimReward()).wait();
-      await (await rewardVault.connect(owner).depositReward({ value: ethers.parseEther("1") })).wait();
 
-      expect(await rewardVault.totalRewardDeposited()).to.equal(ethers.parseEther("2"));
-      expect(await rewardVault.totalEntitlement(memberA.address)).to.equal(ethers.parseEther("2"));
-      expect(await rewardVault.claimedAmount(memberA.address)).to.equal(ethers.parseEther("1"));
+      await expect(
+        rewardVault.connect(owner).depositReward({ value: ethers.parseEther("1") })
+      ).to.be.revertedWithCustomError(rewardVault, "RewardAlreadyDeposited");
+
+      expect(await rewardVault.totalRewardDeposited()).to.equal(ethers.parseEther("1"));
+      expect(await rewardVault.totalEntitlement(memberA.address)).to.equal(ethers.parseEther("1"));
       expect(await rewardVault.claimable(memberA.address)).to.equal(ethers.parseEther("1"));
     });
   });
