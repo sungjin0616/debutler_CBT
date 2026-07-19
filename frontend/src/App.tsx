@@ -163,6 +163,7 @@ function App(): JSX.Element {
   const [status, setStatus] = useState("Hardhat 로컬 상태를 불러오는 중입니다.");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const [participantSearch, setParticipantSearch] = useState("");
   const [criterionSearch, setCriterionSearch] = useState("");
@@ -244,6 +245,15 @@ function App(): JSX.Element {
     return ["정산 결과 확인", "프로젝트 활동 이력 검토"];
   }, [claimedCount, rewardDeposited, rewardEligibleParticipants.length, sharesFinalized]);
 
+  async function getDeployedCode(rpcProvider: ethers.JsonRpcProvider, address: string): Promise<string> {
+    if (!ethers.isAddress(address)) return "0x";
+    try {
+      return await rpcProvider.getCode(address);
+    } catch {
+      return "0x";
+    }
+  }
+
   function pushHistory(item: Omit<TransactionHistory, "id" | "createdAt" | "success"> & { success?: boolean }): void {
     const next = [
       {
@@ -259,9 +269,12 @@ function App(): JSX.Element {
   }
 
   async function refreshState(targetParticipants = participants): Promise<void> {
+    const rpcProvider = new ethers.JsonRpcProvider(RPC_URL);
+    setIsRefreshing(true);
+    setStatus("Hardhat 로컬 상태를 새로 불러오는 중입니다.");
     try {
       setError("");
-      const [rpcAccounts, network] = await Promise.all([provider.send("eth_accounts", []), provider.getNetwork()]);
+      const [rpcAccounts, network] = await Promise.all([rpcProvider.send("eth_accounts", []), rpcProvider.getNetwork()]);
       const names = readStorage<Record<string, string>>(ACCOUNT_NAMES_KEY, {});
       const nextAccounts = rpcAccounts.map((address: string, index: number) => {
         const normalizedAddress = normalize(address);
@@ -281,7 +294,10 @@ function App(): JSX.Element {
       setChainId(network.chainId.toString());
       setIsConnected(true);
 
-      const [cbtCode, vaultCode] = await Promise.all([provider.getCode(cbtAddress), provider.getCode(rewardVaultAddress)]);
+      const [cbtCode, vaultCode] = await Promise.all([
+        getDeployedCode(rpcProvider, cbtAddress),
+        getDeployedCode(rpcProvider, rewardVaultAddress),
+      ]);
       const cbtDeployed = Boolean(cbtAddress && cbtCode !== "0x");
       const vaultDeployed = Boolean(rewardVaultAddress && vaultCode !== "0x");
       setIsCbtDeployed(cbtDeployed);
@@ -297,7 +313,7 @@ function App(): JSX.Element {
       await Promise.all(
         balanceTargets.map(async (item) => {
           try {
-            nextEthBalances[item.normalizedAddress] = await provider.getBalance(item.normalizedAddress);
+            nextEthBalances[item.normalizedAddress] = await rpcProvider.getBalance(item.normalizedAddress);
           } catch {
             nextEthBalances[item.normalizedAddress] = 0n;
           }
@@ -305,7 +321,7 @@ function App(): JSX.Element {
       );
 
       if (cbtDeployed) {
-        const cbt = new ethers.Contract(cbtAddress, CBT_ABI, provider);
+        const cbt = new ethers.Contract(cbtAddress, CBT_ABI, rpcProvider);
         const [latestDecimals, latestSupply, latestOwner, finalized] = await Promise.all([
           cbt.decimals(),
           cbt.totalSupply(),
@@ -319,7 +335,11 @@ function App(): JSX.Element {
 
         await Promise.all(
           targetParticipants.map(async (participant) => {
-            nextBalances[participant.normalizedAddress] = await cbt.balanceOf(participant.normalizedAddress);
+            try {
+              nextBalances[participant.normalizedAddress] = await cbt.balanceOf(participant.normalizedAddress);
+            } catch {
+              nextBalances[participant.normalizedAddress] = 0n;
+            }
           })
         );
       } else {
@@ -329,16 +349,22 @@ function App(): JSX.Element {
       }
 
       if (vaultDeployed) {
-        const vault = new ethers.Contract(rewardVaultAddress, VAULT_ABI, provider);
+        const vault = new ethers.Contract(rewardVaultAddress, VAULT_ABI, rpcProvider);
         const [deposited, currentVaultBalance] = await Promise.all([vault.totalRewardDeposited(), vault.vaultBalance()]);
         setRewardDeposited(deposited);
         setVaultBalance(currentVaultBalance);
 
         await Promise.all(
           targetParticipants.map(async (participant) => {
-            nextClaimables[participant.normalizedAddress] = await vault.claimable(participant.normalizedAddress);
-            nextClaimedAmounts[participant.normalizedAddress] = await vault.claimedAmount(participant.normalizedAddress);
-            nextClaimed[participant.normalizedAddress] = await vault.hasClaimed(participant.normalizedAddress);
+            try {
+              nextClaimables[participant.normalizedAddress] = await vault.claimable(participant.normalizedAddress);
+              nextClaimedAmounts[participant.normalizedAddress] = await vault.claimedAmount(participant.normalizedAddress);
+              nextClaimed[participant.normalizedAddress] = await vault.hasClaimed(participant.normalizedAddress);
+            } catch {
+              nextClaimables[participant.normalizedAddress] = 0n;
+              nextClaimedAmounts[participant.normalizedAddress] = 0n;
+              nextClaimed[participant.normalizedAddress] = false;
+            }
           })
         );
       } else {
@@ -355,7 +381,12 @@ function App(): JSX.Element {
     } catch (refreshError) {
       console.error(refreshError);
       setIsConnected(false);
+      setAccounts([]);
+      setChainId("");
       setError("Hardhat 로컬 노드에 연결할 수 없습니다. 프로젝트 루트에서 npm run node를 실행해주세요.");
+    } finally {
+      rpcProvider.destroy();
+      setIsRefreshing(false);
     }
   }
 
@@ -820,7 +851,9 @@ function App(): JSX.Element {
         <section className="panel admin-panel">
           <div className="panel-header">
             <div><h2>Hardhat 계정 후보</h2><p>첫 번째 계정은 관리자이고, 나머지는 프로젝트 참여자로 등록할 수 있는 후보입니다.</p></div>
-            <button type="button" className="secondary" onClick={() => void refreshState()} disabled={busy}>계정과 잔액 새로고침</button>
+            <button type="button" className="secondary" onClick={() => void refreshState()} disabled={busy || isRefreshing}>
+              {isRefreshing ? "새로고침 중" : "계정과 잔액 새로고침"}
+            </button>
           </div>
           {adminAccount ? (
             <div className="admin-card">
@@ -1185,7 +1218,9 @@ function App(): JSX.Element {
           <p className="small-note">상태: {projectStatus} / 관리자: {owner ? shorten(owner) : "-"} / RPC: {RPC_URL} / Chain {chainId || "-"}</p>
         </div>
         <div className="header-actions">
-          <button type="button" className="secondary" onClick={() => void refreshState()} disabled={busy}>상태 새로고침</button>
+          <button type="button" className="secondary" onClick={() => void refreshState()} disabled={busy || isRefreshing}>
+            {isRefreshing ? "새로고침 중" : "상태 새로고침"}
+          </button>
         </div>
       </header>
 
