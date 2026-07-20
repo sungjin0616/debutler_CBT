@@ -37,7 +37,7 @@ cd ..
 첫 번째 터미널에서 아래 명령을 실행합니다.
 
 ```bash
-npx hardhat nodeㅎ
+npx hardhat node
 ```
 
 ### 2) 스마트 컨트랙트 배포
