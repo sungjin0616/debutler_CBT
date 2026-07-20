@@ -37,7 +37,7 @@ cd ..
 첫 번째 터미널에서 아래 명령을 실행합니다.
 
 ```bash
-npm run node
+npx hardhat nodeㅎ
 ```
 
 ### 2) 스마트 컨트랙트 배포
@@ -45,17 +45,18 @@ npm run node
 새 터미널을 열고 아래 명령으로 컨트랙트를 배포합니다.
 
 ```bash
-npm run deploy:local
+npx hardhat run scripts/deploy.ts --network localhost
 ```
 
 배포 스크립트는 `scripts/deploy.ts`입니다.
 
-### 3) 프런트엔드 실행
+### 3) 프론트엔드 실행
 
 다른 터미널에서 아래 명령을 실행합니다.
 
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
